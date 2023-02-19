@@ -21,6 +21,9 @@ def index(request):
 
     address = request.GET.get('address', 'Default') #retrieves user input from search bar
 
+    # if address is None:
+    #     return redirect('')
+
     geolocator = Nominatim(user_agent="weather")
 
     location = geolocator.geocode(address) #use geolocator to get coordinates from address
