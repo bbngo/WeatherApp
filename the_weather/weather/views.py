@@ -23,27 +23,31 @@ def get_coordinates(request):
 
 def index(request):
     
-    url = 'http://api.openweathermap.org/data/2.5/forecast?lat={0}&lon={1}&units=imperial&appid=75ac73f19ddafd686ee6e9ef942f3f18'
-    
-    forecastlist = []
+    try:
 
-    address = get_address(request)
+        url = 'http://api.openweathermap.org/data/2.5/forecast?lat={0}&lon={1}&units=imperial&appid=75ac73f19ddafd686ee6e9ef942f3f18'
+        
+        forecastlist = []
 
-    geolocator = Nominatim(user_agent="weather")
+        address = get_address(request)
 
-    location = get_coordinates(address) #use geolocator to get coordinates from address
+        geolocator = Nominatim(user_agent="weather")
 
-    city_weather = requests.get(url.format(location.latitude, location.longitude)).json() #requests info from API as json
+        location = get_coordinates(address) #use geolocator to get coordinates from address
 
-    # Retrieve the CSRF token first
-    #csrf_client.get(URL)  # sets cookie
-    #csrftoken = csrf_client.cookies['csrftoken']
+        city_weather = requests.get(url.format(location.latitude, location.longitude)).json() #requests info from API as json
 
-    for item in city_weather["list"]:
-        if(datetime.utcfromtimestamp(int(item["dt"])).strftime('%H:%M') == "00:00"):
-            forecastlist.append(forecastdata(item["main"]["temp_max"], item["main"]["temp_min"], datetime.utcfromtimestamp(int(item["dt"])).strftime('%Y-%m-%d'), item["weather"][0]["icon"]))
+        # Retrieve the CSRF token first
+        #csrf_client.get(URL)  # sets cookie
+        #csrftoken = csrf_client.cookies['csrftoken']
 
-    context = {'forecastlist' : forecastlist, 'address' : address}
+        for item in city_weather["list"]:
+            if(datetime.utcfromtimestamp(int(item["dt"])).strftime('%H:%M') == "00:00"):
+                forecastlist.append(forecastdata(item["main"]["temp_max"], item["main"]["temp_min"], datetime.utcfromtimestamp(int(item["dt"])).strftime('%Y-%m-%d'), item["weather"][0]["icon"]))
+
+        context = {'forecastlist' : forecastlist, 'address' : address}
+    except AttributeError:
+        context = {'address' : 'Default'}
 
     return render(request, 'weather/index.html', context)#, context) #returns the index.html template
 

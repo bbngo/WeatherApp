@@ -2,7 +2,7 @@ from django.test import SimpleTestCase
 from django.urls import reverse, resolve
 from weather.views import get_address, get_coordinates, forecastdata
 
-class TestViews(SimpleTestCase):
+class ViewsTest(SimpleTestCase):
     
     def test_index_url(self):
         url = reverse('index')
